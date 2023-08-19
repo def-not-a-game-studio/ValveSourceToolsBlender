@@ -115,6 +115,7 @@ class SmdImporter(bpy.types.Operator, Logger):
 		return {'RUNNING_MODAL'}
 
 	def ensureAnimationBonesValidated(self):
+		return
 		if self.smd.jobType == ANIM and self.append == 'APPEND' and (hasattr(self.smd,"a") or self.findArmature()):
 			print("- Appending bones from animations is destructive; switching Bone Append Mode to \"Validate\"")
 			self.append = 'VALIDATE'
@@ -567,12 +568,18 @@ class SmdImporter(bpy.types.Operator, Logger):
 						
 						# Key location					
 						if keyframe.pos:
-							for i in range(3):
-								curvesLoc[i].keyframe_points.add(1)
-								if i == 1 and lock_position:
-									curvesLoc[i].keyframe_points[-1].co = [keyframe.frame * 4, 0]
-								else:
-									curvesLoc[i].keyframe_points[-1].co = [keyframe.frame * 4, bone.location[i]]
+							curvesLoc[0].keyframe_points.add(1)
+							curvesLoc[1].keyframe_points.add(1)
+							curvesLoc[2].keyframe_points.add(1)
+
+							if lock_position:
+								curvesLoc[0].keyframe_points[-1].co = [keyframe.frame * 4, 0.0]
+								curvesLoc[1].keyframe_points[-1].co = [keyframe.frame * 4, 0.0]
+							else:
+								curvesLoc[0].keyframe_points[-1].co = [keyframe.frame * 4, bone.location[0]]
+								curvesLoc[1].keyframe_points[-1].co = [keyframe.frame * 4, bone.location[1]]
+
+							curvesLoc[2].keyframe_points[-1].co = [keyframe.frame * 4, bone.location[2]]
 						
 						# Key rotation
 						if keyframe.rot:
